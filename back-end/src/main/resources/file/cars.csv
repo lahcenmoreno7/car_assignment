@@ -1,0 +1,8 @@
+"id","model","name","make","version","year_release","price","fuel" ,"annual_cost"
+1,"C3 blue motion","C3","Citroen","Diesel","2021","15000","0.73","530.00"
+2,"Y120","Yaris","Toyota","Essence","2020","11000","0.23","250.00"
+3,"Polo Style","Polo","Volkswagen","Essence","2021","20000","0.50","200.00"
+4,"A3 R-line","A3","Audi","Essence","2021","32000","0.60","500.00"
+5,"AMG Edition","Clase B","Mercedes-Benz","Essence","2021","30000","0.30","480.00"
+6,"Fit Hibrid","Fit","Honda","Essence","2020","17000","0.30","480.00"
+7,"C1 Base","C1","Citroen","Essence","2020","3000","0.23","130.00"
