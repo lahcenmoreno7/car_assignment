@@ -25,12 +25,12 @@ public class CarServiceWriter implements ItemWriter<Car> {
 	CarRepository contriesRepository;
 
 	/**
-	 * Save countries item into database
+	 * Save cars item into database
 	 */
 	@Override
 	public void write(List<? extends Car> carItems) throws Exception {
 		
-		log.info("save all items cars fomr cvs file to H2 Database");
+		log.info("save all items cars from cvs file to H2 Database");
 		
 		carItems.forEach((item) -> contriesRepository.save(item));
 		

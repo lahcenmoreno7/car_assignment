@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.atradius.car.constant.CarConstant;
-import com.atradius.car.convert.CarDTO;
 import com.atradius.car.exception.CarApplicationException;
 import com.atradius.car.model.Car;
 import com.atradius.car.service.CarService;
@@ -53,6 +52,10 @@ public class CarController {
 	 * Method to get all cars
 	 * @return
 	 */
+	@Operation(summary = "Get All cars", description = "Get all list of cars", tags = { "Cars" })
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Get All cars", content = @Content(array = @ArraySchema(schema = @Schema(implementation = Car.class)))),
+			@ApiResponse(responseCode = "400", description = "Error 400") })
 	@GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<CarResponse> getall() {
 

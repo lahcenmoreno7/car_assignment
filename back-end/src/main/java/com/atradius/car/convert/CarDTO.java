@@ -3,7 +3,6 @@ package com.atradius.car.convert;
 import com.atradius.car.model.Car;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

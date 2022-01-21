@@ -1,9 +1,12 @@
 
 package com.atradius.car.controller;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.Arrays;
@@ -14,8 +17,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -23,63 +26,89 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.atradius.car.constant.CarConstant;
 import com.atradius.car.convert.CarDTO;
 import com.atradius.car.model.Car;
 import com.atradius.car.service.CarService;
-import com.atradius.car.utils.CarRequest;
 import com.atradius.car.utils.CarResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * 
- * @author Home
- *
+ * @author Home @RunWith(MockitoJUnitRunner.class)
  */
 @RunWith(SpringRunner.class)
-@WebMvcTest(CarController.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
+@AutoConfigureMockMvc
 public class CarControllerTest {
 
 	@Autowired
 	private MockMvc mockMvc;
 
-	@MockBean
+	@Autowired
 	private CarService carService;
 
 	@BeforeEach
 	void setMockOutput() {
+		
+		
+	}
+	
+	
+
+	@DisplayName("Test all cars - Controller")
+	@Test
+	public void get_all_cars() throws Exception {
+
+		mockMvc.perform(MockMvcRequestBuilders.get("/cars/all").accept(MediaType.APPLICATION_JSON))
+				.andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk());
+
 	}
 
 	@DisplayName("Test search cars by keyword - Controller")
 	@Test
 	public void get_cars_by_keyword() throws Exception {
 
+		String keyword = "Audi";
 		Sort sort = CarConstant.DEFAULT_SORT_DIRECTION.equalsIgnoreCase(Sort.Direction.ASC.name())
 				? Sort.by(CarConstant.DEFAULT_SORT_BY).ascending()
 				: Sort.by(CarConstant.DEFAULT_SORT_BY).descending();
 
 		Pageable pageable = PageRequest.of(CarConstant.DEFAULT_PAGE_NUMBER, CarConstant.DEFAULT_PAGE_SIZE, sort);
 
-		mockMvc.perform(MockMvcRequestBuilders.get("/cars").content(asJsonString(carsListStub()))
-				.contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
+		CarService mock = org.mockito.Mockito.mock(CarService.class);
+		
 
-		verify(carService, times(1)).getAllCars(pageable);
-		verifyNoMoreInteractions(carService);
+		when(mock.getCarsBySerachKeyword(keyword, pageable)).thenReturn(carsListStub());
+
+		mockMvc.perform(MockMvcRequestBuilders.get("/cars/search/" + keyword).contentType(MediaType.APPLICATION_JSON))
+
+  				.andExpect(status().isOk())
+				.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$",hasSize(3)));
+
+		verifyNoMoreInteractions(mock);
+
 	}
 
 	@DisplayName("Test search cars by keyword - Controller")
 	@Test
 	public void get_lowest_annual_cost() throws Exception {
 
-		int distanceMonth= 250;
+		int distanceMonth = 250;
 		double price = 0.65;
 		
+		CarService mock = org.mockito.Mockito.mock(CarService.class);
+		
+		when(mock.getLowestAnnualCost(String.valueOf(distanceMonth), String.valueOf(price))).thenReturn(carsListStub());
+
 		mockMvc.perform(MockMvcRequestBuilders.get("/lowest").content(asJsonString(cardto()))
 				.contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
 
-		verify(carService, times(1)).getLowestAnnualCost(String.valueOf(distanceMonth),String.valueOf(price)); 
-		verifyNoMoreInteractions(carService);
+		verifyNoMoreInteractions(mock);
 	}
 
 	@DisplayName("Test Spring add new car - Controller")
@@ -132,14 +161,6 @@ public class CarControllerTest {
 		return respnseStub;
 	}
 
-	private CarRequest carRequest() {
-
-		CarRequest car = new CarRequest();
-		car.setPrice(33L);
-		car.setDistanceMonth(250);
-
-		return car;
-	}
 
 	public static String asJsonString(final Object obj) {
 		try {

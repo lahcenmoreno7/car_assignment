@@ -1,13 +1,8 @@
 package com.atradius.car.serviceImpl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
-import java.lang.reflect.Type;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +30,6 @@ public class CarServiceImpl implements CarService {
 
 	CarRepository carRepository;
 	
-	ModelMapper modelMapper;
 
 	public CarServiceImpl(CarRepository carRepository) {
 		this.carRepository = carRepository;
@@ -110,6 +104,7 @@ public class CarServiceImpl implements CarService {
 	public CarResponse getLowestAnnualCost(String distanceMonth,String price) throws Exception {
 
 		CarResponse response = new CarResponse();
+		List<Car> listOfCars = new ArrayList<Car>();
 
 		log.info("Lowest car total annual cost");
 
@@ -118,7 +113,6 @@ public class CarServiceImpl implements CarService {
 		CarLowestResponse carRecommended = listCarsRecommended.stream().findFirst()
 				.orElseThrow(() -> new Exception());
 		
-		List<Car> listOfCars = new ArrayList<Car>();
 		listOfCars.add(convertDTOToCar(carRecommended));
 		
 		List<CarDTO> carDtoList = ModelMapperUtil.mapAll(listOfCars, CarDTO.class);

@@ -28,6 +28,7 @@ import com.atradius.car.convert.CarDTO;
 import com.atradius.car.model.Car;
 import com.atradius.car.repository.CarRepository;
 import com.atradius.car.serviceImpl.CarServiceImpl;
+import com.atradius.car.utils.CarLowestResponse;
 import com.atradius.car.utils.CarResponse;
 
 /**
@@ -107,6 +108,9 @@ public class CarServiceImplTest {
 
 	}
 	
+	
+	
+	
 	@DisplayName("Test Spring add new car - Service")
 	@Test
     public void whenSaveCar_shouldReturnCar() {
@@ -121,7 +125,13 @@ public class CarServiceImplTest {
         verify(carRepository).save(car);
     }
 
-	
+	private List<CarLowestResponse> getRecomendedCar(){
+		
+		List<CarLowestResponse> listRecomended = new ArrayList<CarLowestResponse>();
+		
+		 return null;
+		
+	}
 	
 	private Page<Car> getListOfCars() {
 
